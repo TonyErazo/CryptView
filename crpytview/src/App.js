@@ -6,7 +6,8 @@ import { CandleStickChart } from './components/chart/CandleStickChart';
 
 export function App() {
   const [candleStickData, setCandleStickData] = useState([]);
-
+  const [exchangeInfo, setExchangeInfo] = useState([]);
+  const [serverTime, setServerTime] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,11 +18,11 @@ export function App() {
 
       // Get the exchange info for BTC and LTCBTC
       const exchange_info = await fetchBinanceData(Requests.EXCHANGE_INFO, 'BTCUSDT', 'LTCBTC');
-      console.log(exchange_info);
+      setExchangeInfo(exchange_info);
 
       // Get the exchange server time
       const server_time = await fetchBinanceData(Requests.SERVER_TIME);
-      console.log("SERVER TIME: " + server_time);
+      setServerTime(server_time);
     };
     fetchData();
   }, []);
@@ -41,7 +42,17 @@ export function App() {
 
   return (
     <header>
-      {CandleStickChart(candleStickData, options, "100%", "800px")}
+      <h1 align="center">Candlestick Data</h1>
+      {CandleStickChart(candleStickData, options, "100%", "800px", ["Time", "Open", "High", "Low", "Close"])}
+
+      <div>
+        <h1>Server Time:</h1>
+        <pre>{JSON.stringify(serverTime, null, 2)}</pre>
+
+        <h1>Exchange Info:</h1>
+        <pre>{JSON.stringify(exchangeInfo, null, 2)}</pre>
+
+      </div>
     </header>
   );
 }
