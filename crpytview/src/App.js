@@ -1,37 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
 import React, { useState, useEffect } from 'react';
-import { Chart } from "react-google-charts";
-import CryptoJS from 'crypto-js';
+import { CandlestickIntervals, Requests, fetchBinanceData } from './components/binance/Binance';
+import { CandleStickChart } from './components/chart/CandleStickChart';
+
 
 
 export function App() {
-  const secretKey = 'aPWOT1QqFA7v6QqH4h6DdtseVX0Dl5YZ1sBK7LCVfGoArFmt5Ntumo3l7DMtQARo' // We gotta store this properly somewhere
-  const apiKey = 'uVrzyFyZLzRHnnvm2jeQtW2jv4fEh8cLH1qlaCk5BKVr1lR4KnUVJY6Bv4CQKClB'; // We gotta store this properly somewhere as well
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [candleStickData, setCandleStickData] = useState([]);
 
-  useEffect(() => { fetchBinanceData('BTCUSDT'); }, []);
 
-  const fetchBinanceData = async (symbol) => {
-    const timestamp = Date.now();
-    const queryString = `timestamp=${timestamp}`;
-    const signature = CryptoJS.HmacSHA256(queryString, secretKey).toString(CryptoJS.enc.Hex);
-    const apiUrl = `https://api.binance.us/api/v3/exchangeInfo?symbol=${symbol}`;
+  useEffect(() => {
+    const fetchData = async () => {
 
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
-    const data = await response.json();
-    setData(data);
+      // Get the candlestick data from binance
+      const data = await fetchBinanceData(Requests.CANDLESTICK_DATA, 'BTCUSDT', CandlestickIntervals.ONE_MINUTE, 200);
+      setCandleStickData(data);
+
+      // Get the exchange info for BTC and LTCBTC
+      const exchange_info = await fetchBinanceData(Requests.EXCHANGE_INFO, 'BTCUSDT', 'LTCBTC');
+      console.log(exchange_info);
+
+      // Get the exchange server time
+      const server_time = await fetchBinanceData(Requests.SERVER_TIME);
+      console.log("SERVER TIME: " + server_time);
+    };
+    fetchData();
+  }, []);
+
+
+  /**
+   * Setting up the options for the Candlestick chart...
+   */
+  const options = {
+    legend: "none",
+    bar: { groupWidth: "100%" }, // Remove space between bars.
+    candlestick: {
+      fallingColor: { strokeWidth: 0, fill: "#a52714" }, // red
+      risingColor: { strokeWidth: 0, fill: "#0f9d58" }, // green
+    },
   };
 
   return (
-    <div>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
+    <header>
+      {CandleStickChart(candleStickData, options, "100%", "800px")}
+    </header>
   );
 }
 
