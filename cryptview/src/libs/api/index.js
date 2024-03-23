@@ -68,19 +68,19 @@ const api = {
 			url = url.slice(1, url.length);
 		}
 
-		if (process.env.NODE_ENV === "development")
-		{
-			let logString = "running method: " + opts.method + " on " + fullUrl;
-			if (opts.headers) {
-				logString += " with headers: {\n";
-				for (var header in opts.headers) {
-					logString += "\t\t" + header + ": " + opts.headers[header] + "\n";
-				}
-				logString += "\t}";
-			}
+		// if (process.env.NODE_ENV === "development")
+		// {
+		// 	let logString = "running method: " + opts.method + " on " + fullUrl;
+		// 	if (opts.headers) {
+		// 		logString += " with headers: {\n";
+		// 		for (var header in opts.headers) {
+		// 			logString += "\t\t" + header + ": " + opts.headers[header] + "\n";
+		// 		}
+		// 		logString += "\t}";
+		// 	}
 			
-			console.info(logString);
-		}
+		// 	console.info(logString);
+		// }
 
 		return await fetch(fullUrl, opts);
 	}

@@ -11,7 +11,9 @@ export const ExchangeSlice = createSlice({
 	initialState: exchangeAdapter.getInitialState(),
 	extraReducers: b => b
 		.addCase(getExchange.fulfilled, (state, action) => {
-			return exchangeAdapter.addMany(state, action.payload);
+			return exchangeAdapter.upsertMany(state, action.payload.symbols.map(
+				(symbol) => ({...symbol, fetchedTime: action.payload.serverTime})
+			));
 		})
 })
 

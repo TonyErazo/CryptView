@@ -7,7 +7,7 @@ import CandleStickChart from 'components/chart/CandleStickChart';
 import { getServerTimeAsDate } from 'store/serverTime/serverTime.selectors';
 import { getServerTime } from 'store/serverTime/serverTime.effects';
 import { getExchange } from 'store/exchange/exchange.effects';
-import { getAllExchangeData } from 'store/exchange/exchange.selectors';
+import { getAllExchangeData, getExchangeBySymbols } from 'store/exchange/exchange.selectors';
 import { Card } from 'shadcn/components/ui/card';
 
 export const CandleStickOptions = {
@@ -24,6 +24,7 @@ export const ExampleWithRedux = ({ ticker }) => {
 	const candlestickData = useSelector(state => getCandlestickByTicker(state, ticker));
 	const serverTime = useSelector(getServerTimeAsDate);
 	const exchangeData = useSelector(getAllExchangeData);
+	const BTCUSDTSymbol = useSelector(state => getExchangeBySymbols(state, ['BTCUSDT']));
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -32,7 +33,7 @@ export const ExampleWithRedux = ({ ticker }) => {
 			dispatch(getCandlestick({
 				symbol: ticker,
 				interval: CandlestickIntervals.FIVE_MINUTES,
-				limit: 10
+				limit: 200
 			}))
 		}
 	}, [candlestickData, ticker, dispatch]);
@@ -81,6 +82,10 @@ export const ExampleWithRedux = ({ ticker }) => {
 					<pre>{JSON.stringify(exchangeData, null, 2)}</pre>
 				</Card>
 			)}
+			<Card className="p-[10px]">
+					<h1>Exchange Data:</h1>
+					<pre>{JSON.stringify(BTCUSDTSymbol[0], null, 2)}</pre>
+				</Card>
 			</div>
 		</>
 	)
