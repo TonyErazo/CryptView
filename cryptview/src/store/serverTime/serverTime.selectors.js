@@ -1,6 +1,11 @@
-import { createSelector } from "@reduxjs/toolkit";
+import { createAction, createSelector } from "@reduxjs/toolkit";
 
 export const getServerTimeState = state => state.ServerTime;
+
+export const getServerTime = createSelector(
+	getServerTimeState,
+	(state) => state
+)
 
 export const getServerTimeAsDate = createSelector(
 	getServerTimeState,

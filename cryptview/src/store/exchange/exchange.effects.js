@@ -9,12 +9,10 @@ export const getExchange = createAsyncThunk(
 		{
 			const response = await api.get(`v3/exchangeInfo?symbols=[${symbols.map(param => `"${param}"`).join(',')}]`)
 
-			console.log(response);
-
 			if(response.ok)
 			{
 				const data = await response.json();
-				return data.symbols;
+				return data;
 			}
 			else
 			{
