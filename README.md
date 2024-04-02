@@ -1,6 +1,10 @@
 # CryptView
 Crypto Currency Chart Viewer
 
+Front Page
+
+![Front Page](https://github.com/TonyErazo/CryptView/tree/tony/images/image.png?raw=true)
+
 # Installation
 > <b>Clone the repository:</b> <br/>
 > `git clone https://github.com/TonyErazo/CryptView.git`<br/><br/>
