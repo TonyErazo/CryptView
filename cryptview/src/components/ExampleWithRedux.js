@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react'
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCandlestickByTicker } from 'store/candlestick/candlestick.selectors';
 import { getCandlestick } from 'store/candlestick/candlestick.effects';
-import { CandlestickIntervals } from 'libs/binance';
-import CandleStickChart from 'components/chart/CandleStickChart';
+import { TimeIntervals } from 'libs/binance';
+
 import { getServerTimeAsDate } from 'store/serverTime/serverTime.selectors';
 import { getServerTime } from 'store/serverTime/serverTime.effects';
 import { getExchange } from 'store/exchange/exchange.effects';
 import { getAllExchangeData, getExchangeBySymbols } from 'store/exchange/exchange.selectors';
 import { Card } from 'shadcn/components/ui/card';
+import CandleStickChart from "./chart/CandleStickChart";
 
 export const CandleStickOptions = {
 	legend: "none",
@@ -27,13 +28,15 @@ export const ExampleWithRedux = ({ ticker }) => {
 	const BTCUSDTSymbol = useSelector(state => getExchangeBySymbols(state, ['BTCUSDT']));
 	const dispatch = useDispatch();
 
+	const chartContainerRef = useRef();
+
 	useEffect(() => {
 		if(!candlestickData)
 		{
 			dispatch(getCandlestick({
 				symbol: ticker,
-				interval: CandlestickIntervals.FIVE_MINUTES,
-				limit: 200
+				interval: TimeIntervals.ONE_HOUR,
+				limit: 400
 			}))
 		}
 	}, [candlestickData, ticker, dispatch]);
@@ -45,7 +48,7 @@ export const ExampleWithRedux = ({ ticker }) => {
 		}, 1000);
 
 		return () => clearInterval(interval);
-	}, [serverTime, dispatch])
+	}, [serverTime, dispatch]);
 
 
 	useEffect(() => {
@@ -53,22 +56,12 @@ export const ExampleWithRedux = ({ ticker }) => {
 		{
 			dispatch(getExchange(['BTCUSDT', 'LTCBTC']))
 		}
-	}, [exchangeData, dispatch])
+	}, [exchangeData, dispatch]);
 
 	return (
 		<>
-			{candlestickData && 
-				(<>
-				testing
-					<CandleStickChart 
-						candleStickData={candlestickData}
-						options={CandleStickOptions}
-						h={"100%"}
-						w={"100%"}
-						columns={["Time", "Open", "High", "Low", "Close"]}
-					/>
-				</>)
-			}
+
+				<CandleStickChart ticker={ticker}/>
 			<div>
 			{serverTime && (
 				<Card className="p-[10px] my-[10px]">
