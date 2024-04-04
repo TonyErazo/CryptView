@@ -1,8 +1,9 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCandlestick } from 'store/candlestick/candlestick.effects';
 import { getCandlestickByTicker } from 'store/candlestick/candlestick.selectors';
+import { TimeIntervals } from 'libs/binance';
 import { ColorType, createChart, CrosshairMode } from "lightweight-charts";
 
 /**
@@ -31,9 +32,31 @@ export default function CandleStickChart(props) {
 
 	let candleStickObjectArray = [];
 
+	let chart;
+	let candleSeries;
+
+	const keys = ['time', 'open', 'high', 'low', 'close'];
+
 	useEffect(() => {
 
-		const chart = createChart(chartContainerRef.current, {
+		dispatch(getCandlestick({
+			symbol: ticker,
+			interval: TimeIntervals.ONE_HOUR,
+			limit: 200
+		})).then( res => {
+			console.log('initializing charts...');
+			initializeCharts(res.payload.data);
+		});
+
+	}, []);
+
+
+	function initializeCharts(priceData) {
+		
+		//console.log('ref: ' + chartContainerRef.current.value);
+		if(!chart && priceData && !chartContainerRef.current.value) {
+			chartContainerRef.current.value = 'set-chart';
+			chart = createChart(chartContainerRef.current, {
 				width: 800,
 				height: 200,
 				layout: { backgroundColor: '#000000', textColor: 'rgba(255, 255, 255, 0.9)', },
@@ -44,26 +67,46 @@ export default function CandleStickChart(props) {
 				crosshair: { mode: CrosshairMode.Normal, },
 				priceScale: { borderColor: 'rgba(197, 203, 206, 0.8)',	},
 				timeScale: { borderColor: 'rgba(197, 203, 206, 0.8)',	},
-		});
+			});
 
+			chart.applyOptions({
+				localization: {
+								timeFormatter: (timestamp) => {
+										 return new Date(timestamp * 1000).toLocaleString('en-GB');
+								}
+					 }
+			});
 
-		const candleSeries = chart.addCandlestickSeries({
-			upColor: '#4bffb5',
-      downColor: '#ff4976',
-      borderDownColor: '#ff4976',
-      borderUpColor: '#4bffb5',
-      wickDownColor: '#838ca1',
-      wickUpColor: '#838ca1',
-		});
+			candleSeries = chart.addCandlestickSeries({
+				upColor: '#4bffb5',
+				downColor: '#ff4976',
+				borderDownColor: '#ff4976',
+				borderUpColor: '#4bffb5',
+				wickDownColor: '#838ca1',
+				wickUpColor: '#838ca1',
+			});
 
-		const keys = ['time', 'open', 'high', 'low', 'close'];
+			console.log("Charts have been initialized! chart: " + chart + " series: " + candleSeries);
 
-		if(candlestickData) {
-			console.log(candlestickData.length);
-			for(const element of candlestickData) {
+			setChartData(chart, candleSeries, priceData);
+		}
+		else if(chartContainerRef.current.value && priceData) {
+			//We already have our charts defined so we just update the data on the re-render
+		}
+	}
+
+	function setChartData(tradingChart, series, priceData) {
+
+		console.log('chart: ' + tradingChart + ' series: ' + series + ' data: ' + candlestickData);
+
+		if(tradingChart && candleSeries && priceData) {
+
+			//candlestickData.slice().sort((a, b) => a[0]-b[0]);
+
+			for(const element of priceData) {
 				// We will convert the time first as this throws an error
-				console.log(element);
-
+				//console.log(element);
+				
 				const candlestickElement = {
 					time: element[0],
 					open: Number(element[1]),
@@ -74,22 +117,20 @@ export default function CandleStickChart(props) {
 
 				//candlestickElement.closeTime = element[6];
 				//candlestickElement.closeTime = new Date([element[6]]);
-				console.log(JSON.stringify(candlestickElement));		
+				//console.log(JSON.stringify(candlestickElement));		
 				candleStickObjectArray.push(candlestickElement);	
 			}
-			candleSeries.setData(candleStickObjectArray);
+			series.setData(candleStickObjectArray);
+			//console.log("Updated chart data");
 			//chart.timeScale().fitContent();
 			//console.log(candleStickObjectArray);
 			//const element = candlestickData[0];
 			//candleSeries.setData([{time: element[0], open: Number(element[1]), high: Number(element[2]), low: Number(element[3]), close: Number(element[4])}]);
 		}
-		console.log("triggered re-render");
-	}, [candlestickData, dispatch]);
+	}
 
 
     return (
-        <div
-            ref={chartContainerRef}
-        />
+        <div ref={chartContainerRef}/>
     );
 };

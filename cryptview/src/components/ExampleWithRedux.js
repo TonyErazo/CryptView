@@ -28,18 +28,10 @@ export const ExampleWithRedux = ({ ticker }) => {
 	const BTCUSDTSymbol = useSelector(state => getExchangeBySymbols(state, ['BTCUSDT']));
 	const dispatch = useDispatch();
 
-	const chartContainerRef = useRef();
+/*	useEffect(() => {
 
-	useEffect(() => {
-		if(!candlestickData)
-		{
-			dispatch(getCandlestick({
-				symbol: ticker,
-				interval: TimeIntervals.ONE_HOUR,
-				limit: 400
-			}))
-		}
 	}, [candlestickData, ticker, dispatch]);
+*/
 
 	useEffect(() => {
 		dispatch(getServerTime());
@@ -60,8 +52,8 @@ export const ExampleWithRedux = ({ ticker }) => {
 
 	return (
 		<>
-
-				<CandleStickChart ticker={ticker}/>
+					<CandleStickChart ticker={ticker}/>
+				
 			<div>
 			{serverTime && (
 				<Card className="p-[10px] my-[10px]">
