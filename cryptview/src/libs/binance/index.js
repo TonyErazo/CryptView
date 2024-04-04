@@ -75,7 +75,6 @@ export const fetchBinanceData = async (requestType, ...parameters) => {
     const endpoint = typeof requestType.GET === 'function' ? requestType.GET(parameters) : requestType.GET;
     const headers = requestType.HEADER ? { 'HEADER': requestType.HEADER } : {};
     const request = `${HOST}${endpoint}`;
-    console.log("REQUEST: " + request);
     const response = await fetch(request, {
         method: 'GET',
         headers: headers,
