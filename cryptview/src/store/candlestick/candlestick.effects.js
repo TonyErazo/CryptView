@@ -15,6 +15,7 @@ export const getCandlestick = createAsyncThunk(
 			}
 			else
 			{
+				console.log('error candlestick.effect.js');
 				return response.json().then(e => rejectWithValue(e));
 			}
 		}
