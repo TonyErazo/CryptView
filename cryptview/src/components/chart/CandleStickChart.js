@@ -43,7 +43,7 @@ export default function CandleStickChart(props) {
 			symbol: ticker,
 			interval: TimeIntervals.ONE_HOUR,
 			limit: 200
-		})).then( res => {
+		})).then(res => {
 			console.log('initializing charts...');
 			initializeCharts(res.payload.data);
 		});
@@ -52,29 +52,27 @@ export default function CandleStickChart(props) {
 
 
 	function initializeCharts(priceData) {
-		
+
 		//console.log('ref: ' + chartContainerRef.current.value);
-		if(!chart && priceData && !chartContainerRef.current.value) {
+		if (!chart && priceData && !chartContainerRef.current.value) {
 			chartContainerRef.current.value = 'set-chart';
 			chart = createChart(chartContainerRef.current, {
-				width: 800,
+				width: 1000,
 				height: 200,
 				layout: { backgroundColor: '#000000', textColor: 'rgba(255, 255, 255, 0.9)', },
 				grid: {
-					vertLines: { color: 'rgba(197, 203, 206, 0.5)',	},
+					vertLines: { color: 'rgba(197, 203, 206, 0.5)', },
 					horzLines: { color: 'rgba(197, 203, 206, 0.5)', },
 				},
 				crosshair: { mode: CrosshairMode.Normal, },
-				priceScale: { borderColor: 'rgba(197, 203, 206, 0.8)',	},
-				timeScale: { borderColor: 'rgba(197, 203, 206, 0.8)',	},
+				priceScale: { borderColor: 'rgba(197, 203, 206, 0.8)', },
+				timeScale: { borderColor: 'rgba(197, 203, 206, 0.8)', },
 			});
 
 			chart.applyOptions({
 				localization: {
-								timeFormatter: (timestamp) => {
-										 return new Date(timestamp).toLocaleString('en-US');
-								}
-					 }
+					timeFormatter: timestamp => new Date(timestamp).toLocaleString('en-GB')
+        }
 			});
 
 			candleSeries = chart.addCandlestickSeries({
@@ -90,7 +88,7 @@ export default function CandleStickChart(props) {
 
 			setChartData(chart, candleSeries, priceData);
 		}
-		else if(chartContainerRef.current.value && priceData) {
+		else if (chartContainerRef.current.value && priceData) {
 			//We already have our charts defined so we just update the data on the re-render
 		}
 	}
@@ -99,14 +97,14 @@ export default function CandleStickChart(props) {
 
 		console.log('chart: ' + tradingChart + ' series: ' + series + ' data: ' + candlestickData);
 
-		if(tradingChart && candleSeries && priceData) {
+		if (tradingChart && candleSeries && priceData) {
 
 			//candlestickData.slice().sort((a, b) => a[0]-b[0]);
 
-			for(const element of priceData) {
+			for (const element of priceData) {
 				// We will convert the time first as this throws an error
 				//console.log(element);
-				
+
 				const candlestickElement = {
 					time: element[0],
 					open: Number(element[1]),
@@ -118,8 +116,9 @@ export default function CandleStickChart(props) {
 				//candlestickElement.closeTime = element[6];
 				//candlestickElement.closeTime = new Date([element[6]]);
 				//console.log(JSON.stringify(candlestickElement));		
-				candleStickObjectArray.push(candlestickElement);	
+				candleStickObjectArray.push(candlestickElement);
 			}
+
 			series.setData(candleStickObjectArray);
 			//console.log("Updated chart data");
 			//chart.timeScale().fitContent();
@@ -130,7 +129,7 @@ export default function CandleStickChart(props) {
 	}
 
 
-    return (
-        <div ref={chartContainerRef}/>
-    );
+	return (
+		<div ref={chartContainerRef} />
+	);
 };
