@@ -72,7 +72,7 @@ export default function CandleStickChart(props) {
 			chart.applyOptions({
 				localization: {
 					timeFormatter: timestamp => new Date(timestamp).toLocaleString('en-GB')
-				}
+        }
 			});
 
 			candleSeries = chart.addCandlestickSeries({
