@@ -37,7 +37,7 @@ export const ExampleWithRedux = ({ ticker }) => {
 		dispatch(getServerTime());
 		const interval = setInterval(() => {
 			dispatch(getServerTime());
-		}, 1000);
+		}, 500); // The server time would skip 2 seconds sometimes, so it's better to get quicker time.
 
 		return () => clearInterval(interval);
 	}, [serverTime, dispatch]);
