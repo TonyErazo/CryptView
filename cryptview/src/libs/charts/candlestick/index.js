@@ -74,6 +74,34 @@ export default function CandleStickChart(props) {
 
 	let chartExists = false;
 
+	let mouseDragged = false;
+
+	function handleMouseMove(e) {
+		mouseDragged = true;
+	}
+	
+	function handleMouseDown(e) {
+		mouseDragged = false;
+	}
+
+	function handleMouseUp(e) {
+		if(mouseDragged) {
+			console.log('Mouse dragged');
+		}
+		else {
+			console.log('Mouse clicked');
+		}
+	}
+
+
+	function setChartEvents(chart) {
+		//console.log('Settting chart events...');
+	
+		chart.current.addEventListener('mousemove', handleMouseMove, true);
+		chart.current.addEventListener('mousedown', handleMouseDown, false);
+		chart.current.addEventListener('mouseup', handleMouseUp, false);
+	}
+
 	useEffect(() => {
 		if(!chart && !series && chartData && !chartExists)
 		{
@@ -88,6 +116,7 @@ export default function CandleStickChart(props) {
 
 			setChart(localChart);
 			setSeries(localSeries);
+			setChartEvents(chartContainerRef);
 			chartExists = true;
 		}
 		else if(series)
