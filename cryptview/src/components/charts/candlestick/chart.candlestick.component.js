@@ -10,6 +10,7 @@ import { getCandlestickByTicker } from 'store/candlestick/candlestick.selectors'
 
 export const CandlestickChartComponent = (props) => {
 
+    let candleStickLimit = 200;
     const {height, width} = useWindowDimensions();
     let {ticker} = useParams();
     ticker = ticker.toUpperCase();
@@ -23,15 +24,23 @@ export const CandlestickChartComponent = (props) => {
             dispatch(getCandlestick({
                 symbol: ticker,
                 interval: TimeIntervals.ONE_HOUR,
-                limit: 200
+                limit: candleStickLimit
             }));
         }
     }, [chartData, ticker, dispatch]);
+
+    function setCandleStickLimit(limit) {
+        candleStickLimit = limit;
+    }
+
+    function getCandleStickLimit() {
+        return candleStickLimit;
+    }
     
     return (
         <>
             {chartData && chartData.length > 0 && (
-                <CandleStickChart chartData={chartData} size={{width: width, height: height * 0.8}} />
+                <CandleStickChart chartData={chartData} size={{width: width, height: height * 0.8}} candleStickLimit={candleStickLimit} />
             )}
             {(!chartData || chartData.length === 0) && (
                 <>

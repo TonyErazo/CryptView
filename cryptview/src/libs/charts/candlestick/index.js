@@ -51,7 +51,7 @@ const chartOptions = (size) => ({
 	},
 	extra: {
 		localization: {
-			timeFormatter: timestamp => new Date(timestamp).toLocaleString('en-GB')
+			timeFormatter: timestamp => new Date(timestamp).toLocaleString('en-US')
 		}
 	},
 	candlestickSeries: {
@@ -66,7 +66,7 @@ const chartOptions = (size) => ({
 
 export default function CandleStickChart(props) {
 
-	const { chartData, size } = props;
+	let { chartData, size, candleStickLimit } = props;
 	const chartContainerRef = useRef();
 
 	const [chart, setChart] = useState(null);
@@ -75,6 +75,7 @@ export default function CandleStickChart(props) {
 	let chartExists = false;
 
 	let mouseDragged = false;
+	let mouseX;
 
 	function handleMouseMove(e) {
 		mouseDragged = true;
@@ -82,11 +83,30 @@ export default function CandleStickChart(props) {
 	
 	function handleMouseDown(e) {
 		mouseDragged = false;
+		mouseX = e.clientX;
 	}
 
-	function handleMouseUp(e) {
+	function handleMouseUp(e, candlestickSeries) {
 		if(mouseDragged) {
 			console.log('Mouse dragged');
+			
+			//setCandleStickLimit(getCandleStickLimit() + 100);
+			let currentMouseX = e.clientX;
+
+			//Figure this out later but if the have candlesticks added on already we must assume it fills up the chart width so the drag must be larger towards the left.
+			//Another idea is we can go off the charts viewport this would be a better option
+			//if(currentMouseX > mouseX + (candleStickLimit)) {
+				console.log('Mouse X: ' + mouseX + ' current x: ' + currentMouseX + ' limit: ' + candleStickLimit);
+				candleStickLimit += 200;
+
+				console.log('series: ' + candlestickSeries);
+				if(candlestickSeries) {
+					console.log('Setting series data...');
+					candlestickSeries.setData(dataArrayToChartObjects(chartData));
+				}
+			//}
+
+			//localSeries.setData(dataArrayToChartObjects(chartData));
 		}
 		else {
 			console.log('Mouse clicked');
@@ -94,12 +114,13 @@ export default function CandleStickChart(props) {
 	}
 
 
-	function setChartEvents(chart) {
+	function setChartEvents(chart, candlestickSeries) {
 		//console.log('Settting chart events...');
-	
 		chart.current.addEventListener('mousemove', handleMouseMove, true);
 		chart.current.addEventListener('mousedown', handleMouseDown, false);
-		chart.current.addEventListener('mouseup', handleMouseUp, false);
+		chart.current.addEventListener('mouseup', function() {
+			handleMouseUp(chart.current, candlestickSeries);
+		}, false);
 	}
 
 	useEffect(() => {
@@ -115,8 +136,9 @@ export default function CandleStickChart(props) {
 			localSeries.setData(dataArrayToChartObjects(chartData));
 
 			setChart(localChart);
+			setChartEvents(chartContainerRef, localSeries);
 			setSeries(localSeries);
-			setChartEvents(chartContainerRef);
+			//console.log('Setting series...' + series + ' Local series: ' + localSeries);
 			chartExists = true;
 		}
 		else if(series)
