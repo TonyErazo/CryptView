@@ -1,7 +1,7 @@
 import useWindowDimensions from 'hooks/useWindowDimensions';
 import { TimeIntervals } from 'libs/binance';
 import CandleStickChart from 'libs/charts/candlestick';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCandlestick } from 'store/candlestick/candlestick.effects';
@@ -10,7 +10,7 @@ import { getCandlestickByTicker } from 'store/candlestick/candlestick.selectors'
 
 export const CandlestickChartComponent = (props) => {
 
-    let candleStickLimit = 200;
+    const [candleStickLimit, setCandleStickLimit] = useState(200);
     const {height, width} = useWindowDimensions();
     let {ticker} = useParams();
     ticker = ticker.toUpperCase();
@@ -19,28 +19,52 @@ export const CandlestickChartComponent = (props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(!chartData || chartData.length === 0)
+        if(!chartData || chartData.length === 0 || chartData.length < candleStickLimit)
         {
-            dispatch(getCandlestick({
-                symbol: ticker,
-                interval: TimeIntervals.ONE_HOUR,
-                limit: candleStickLimit
-            }));
+       		dispatch(
+				getCandlestick({
+					symbol: ticker,
+					interval: TimeIntervals.ONE_MINUTE,
+					limit: candleStickLimit
+				}));
         }
-    }, [chartData, ticker, dispatch]);
+    }, [chartData, ticker, dispatch, candleStickLimit]);
 
-    function setCandleStickLimit(limit) {
-        candleStickLimit = limit;
-    }
-
-    function getCandleStickLimit() {
-        return candleStickLimit;
-    }
+	useEffect(() => {
+		if(chartData && chartData.length > 0)
+		{
+			const interval = setInterval(() => {
+				console.log("updating");
+				getCandlestick({
+					symbol: ticker,
+					interval: TimeIntervals.ONE_MINUTE,
+					limit: candleStickLimit
+				});
+			}, 60000);
+			return () => clearInterval(interval);
+		}
+	}, [chartData]);
     
+	const handleCandlestickLimitChange = (amount) => {
+		setCandleStickLimit(current => 
+			{
+				if(current < 1000)
+					return current + amount;
+				else
+					return amount;
+			}
+		);
+	}
+
     return (
         <>
             {chartData && chartData.length > 0 && (
-                <CandleStickChart chartData={chartData} size={{width: width, height: height * 0.8}} candleStickLimit={candleStickLimit} />
+                <CandleStickChart chartData={chartData} size={{width: width, height: height * 0.8}} candleStickLimit={candleStickLimit} onScroll={
+					(scrollAmount) => {
+						const amount = Number(Math.floor(scrollAmount / 5));
+						handleCandlestickLimitChange(amount);
+					}
+				} />
             )}
             {(!chartData || chartData.length === 0) && (
                 <>
