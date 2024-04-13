@@ -11,7 +11,7 @@ export const CandlestickSlice = createSlice({
 	initialState: candlestickAdapter.getInitialState(),
 	extraReducers: b => b
 		.addCase(getCandlestick.fulfilled, (state, action) => {
-			candlestickAdapter.addOne(state, action.payload);
+			candlestickAdapter.upsertOne(state, action.payload);
 		})
 })
 

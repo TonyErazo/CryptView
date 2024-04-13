@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HomeComponent } from "components/home/home.component";
 import { createBrowserHistory } from "history";
 import { ExampleComponent } from "components/example/example.component";
-import { CandlestickChartComponent } from "components/charts/candlestick/candlestick.chart.component";
+import { CandlestickChartComponent } from "components/charts/candlestick/chart.candlestick.component";
  
 export const App = () => {
 

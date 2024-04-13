@@ -51,7 +51,7 @@ const chartOptions = (size) => ({
 	},
 	extra: {
 		localization: {
-			timeFormatter: timestamp => new Date(timestamp).toLocaleString('en-GB')
+			timeFormatter: timestamp => new Date(timestamp).toLocaleString('en-US')
 		}
 	},
 	candlestickSeries: {
@@ -64,6 +64,11 @@ const chartOptions = (size) => ({
 	}
 });
 
+const defaultStartLocation = {
+	x: 0,
+	y: 0
+};
+
 export default function CandleStickChart(props) {
 
 	const { chartData, size } = props;
@@ -73,6 +78,34 @@ export default function CandleStickChart(props) {
 	const [series, setSeries] = useState(null);
 
 	let chartExists = false;
+
+	const [startLocation, setStartLocation] = useState(0);
+
+	function handleMouseDown(e) {
+		setStartLocation(e.clientX);
+	}
+
+	function handleMouseUp(e) {
+		const scrollAmount = e.clientX - startLocation;
+
+		if(props.onScroll && scrollAmount > 10)
+		{
+			props.onScroll(scrollAmount);
+		}
+	}
+
+	useEffect(() => {
+		if(chartContainerRef?.current)
+		{
+			chartContainerRef.current.addEventListener('mousedown', handleMouseDown, false);
+			chartContainerRef.current.addEventListener('mouseup', handleMouseUp, false);
+	
+			return () => {
+				chartContainerRef.current.removeEventListener('mousedown', handleMouseDown, false);
+				chartContainerRef.current.removeEventListener('mouseup', handleMouseUp, false);
+			}	
+		}
+	}, [chartContainerRef?.current, startLocation]);
 
 	useEffect(() => {
 		if(!chart && !series && chartData && !chartExists)
@@ -89,6 +122,7 @@ export default function CandleStickChart(props) {
 			setChart(localChart);
 			setSeries(localSeries);
 			chartExists = true;
+			props.onScroll();
 		}
 		else if(series)
 		{

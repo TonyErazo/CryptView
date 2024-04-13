@@ -1,11 +1,18 @@
 import React, { useEffect } from 'react';
 import home from './home.module.css';
+import {useNavigate} from 'react-router-dom';
 
 export const HomeComponent = () => {
 
+    const navigate = useNavigate();
+    
     useEffect(() => {
         console.log(home);
     }, []);
+
+    function routeToBitcoinChart() {
+        navigate('candlestick/BTCUSDT');
+    }
 
     return (
         <div className={home.container}>
@@ -13,7 +20,7 @@ export const HomeComponent = () => {
                 <div className={home.first_left}>
                     <h1 className={home.first_title}>Cryptview</h1>
                     <p className={home.first_body}>Keep track of your crypto with the latest price, news and updates</p>
-                    <button className={home.first_button}>Start Now</button>
+                    <button className={home.first_button} onClick={routeToBitcoinChart}>Start Now</button>
                 </div>
                 <div className={home.first_right} />
             </div>

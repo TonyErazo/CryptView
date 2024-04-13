@@ -1,4 +1,4 @@
-import { CandlestickChartComponent } from 'components/charts/candlestick/candlestick.chart.component'
+import { CandlestickChartComponent } from 'components/charts/candlestick/chart.candlestick.component'
 import React from 'react'
 import { Route } from 'react-router-dom'
 

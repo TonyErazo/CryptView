@@ -6,7 +6,7 @@ import { getServerTime } from 'store/serverTime/serverTime.effects';
 import { getExchange } from 'store/exchange/exchange.effects';
 import { getAllExchangeData, getExchangeBySymbols } from 'store/exchange/exchange.selectors';
 import { Card } from 'shadcn/components/ui/card';
-import { CandlestickChartComponent } from "./charts/candlestick/candlestick.chart.component";
+import { CandlestickChartComponent } from "./charts/candlestick/chart.candlestick.component";
 
 export const CandleStickOptions = {
 	legend: "none",
