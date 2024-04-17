@@ -3,11 +3,11 @@ Crypto Currency Chart Viewer
 
 Front Page
 
-![Front Page](https://github.com/TonyErazo/CryptView/blob/tony/images/image.png?raw=true)
+![Front Page](https://github.com/TonyErazo/CryptView/blob/main/images/image.png?raw=true)
 
 Chart Page
 
-![Chart Page](https://github.com/TonyErazo/CryptView/blob/tony/images/chart.png?raw=true)
+![Chart Page](https://github.com/TonyErazo/CryptView/blob/main/images/chart.png?raw=true)
 
 # Installation
 > <b>Clone the repository:</b> <br/>
