@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCandlestick } from 'store/candlestick/candlestick.effects';
 import { getCandlestickByTicker } from 'store/candlestick/candlestick.selectors';
+import {SearchBar} from 'components/searchbar/searchbar.components';
 
 
 export const CandlestickChartComponent = (props) => {
