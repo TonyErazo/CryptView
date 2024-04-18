@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getCandlestick } from 'store/candlestick/candlestick.effects';
 import { getCandlestickByTicker } from 'store/candlestick/candlestick.selectors';
-
+import SearchBar from 'components/searchbar/searchbar.components';
+import symbols from 'libs/api/coinmarketcap/symbols.json';
 
 export const CandlestickChartComponent = (props) => {
 
@@ -58,6 +59,11 @@ export const CandlestickChartComponent = (props) => {
 
     return (
         <>
+            <div className='top-menu'>
+
+                <SearchBar suggestions={symbols} />
+
+            </div>
             {chartData && chartData.length > 0 && (
                 <CandleStickChart chartData={chartData} size={{width: width, height: height * 0.8}} candleStickLimit={candleStickLimit} onScroll={
 					(scrollAmount) => {
