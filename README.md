@@ -7,7 +7,7 @@ Front Page
 
 Chart Page
 
-![Chart Page](https://github.com/TonyErazo/CryptView/blob/main/images/chart.png?raw=true)
+![Chart Page](https://github.com/TonyErazo/CryptView/blob/main/images/charts.png?raw=true)
 
 # Installation
 > <b>Clone the repository:</b> <br/>
